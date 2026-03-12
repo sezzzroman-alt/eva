@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloudeva.ai — AI-First Multi-Cloud Decision Governance</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --accent:#0071e3;
+  --accent-light:#2997ff;
+  --cyan:#00c8ff;
+  --green:#34c759;
+  --grey-100:#f5f5f7;
+  --grey-600:#6e6e73;
+  --grey-800:#1d1d1f;
+}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:'Figtree',-apple-system,sans-serif;background:#000;color:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+/* ═══════════════ NAV ═══════════════ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:52px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:0.5px solid rgba(255,255,255,0.1);
+  transition:background 0.4s;
+}
+.nav-logo svg{height:30px;width:auto;}
+.nav-links{display:flex;gap:28px;list-style:none;position:absolute;left:50%;transform:translateX(-50%);}
+.nav-links a{font-size:0.75rem;color:rgba(255,255,255,0.75);text-decoration:none;letter-spacing:0.01em;transition:color 0.2s;}
+.nav-links a:hover{color:#fff;}
+.nav-actions{display:flex;gap:16px;align-items:center;}
+.nav-actions a{font-size:0.75rem;color:var(--accent-light);text-decoration:none;transition:opacity 0.2s;}
+.nav-pill{background:var(--accent);color:#fff !important;padding:6px 16px;border-radius:980px;font-size:0.75rem;font-weight:600;text-decoration:none;transition:background 0.2s;}
+.nav-pill:hover{background:#0077ed;}
+
+/* ═══════════════ HERO — full-bleed image + zoom ═══════════════ */
+.hero{
+  position:relative;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:120px 24px 80px;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.7) 100%),
+    url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1800&auto=format&fit=crop&q=80') center/cover no-repeat;
+  transform:scale(1.12);
+  animation:heroBgZoom 1.6s cubic-bezier(0.16,1,0.3,1) forwards;
+  will-change:transform;
+}
+@keyframes heroBgZoom{from{transform:scale(1.25);}to{transform:scale(1.0);}}
+
+/* Mesh overlay */
+.hero-mesh{
+  position:absolute;inset:0;z-index:1;
+  background-image:linear-gradient(rgba(0,113,227,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,113,227,0.04) 1px,transparent 1px);
+  background-size:70px 70px;
+  animation:meshDrift 50s linear infinite;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);
+}
+@keyframes meshDrift{0%{transform:translate(0,0);}100%{transform:translate(70px,70px);}}
+
+.hero-content{position:relative;z-index:2;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:0.78rem;font-weight:600;color:var(--accent-light);
+  letter-spacing:0.06em;text-transform:uppercase;margin-bottom:24px;
+  opacity:0;animation:riseIn 0.9s 0.3s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.hero-eyebrow::before{content:'';width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 10px var(--green);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+.hero h1{
+  font-size:clamp(3rem,8vw,7.5rem);font-weight:900;
+  line-height:1.0;letter-spacing:-0.045em;color:#fff;
+  max-width:1100px;
+  opacity:0;animation:riseIn 1s 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+  text-shadow:0 4px 40px rgba(0,0,0,0.5);
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,#fff 0%,rgba(0,200,255,0.95) 50%,#2997ff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  margin-top:22px;font-size:clamp(1rem,2vw,1.3rem);font-weight:400;
+  color:rgba(255,255,255,0.6);max-width:620px;line-height:1.65;letter-spacing:-0.01em;
+  opacity:0;animation:riseIn 1s 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.hero-actions{
+  display:flex;gap:16px;margin-top:40px;flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:riseIn 1s 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.btn-apple{display:inline-flex;align-items:center;gap:6px;padding:14px 30px;border-radius:980px;font-size:0.95rem;font-weight:700;font-family:'Figtree',sans-serif;text-decoration:none;letter-spacing:-0.01em;cursor:pointer;border:none;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);}
+.btn-blue{background:var(--accent);color:#fff;}
+.btn-blue:hover{background:#0077ed;transform:scale(1.03);box-shadow:0 0 40px rgba(0,113,227,0.4);}
+.btn-ghost{background:rgba(255,255,255,0.12);color:#fff;border:0.5px solid rgba(255,255,255,0.18);backdrop-filter:blur(10px);}
+.btn-ghost:hover{background:rgba(255,255,255,0.2);transform:scale(1.03);}
+
+.cloud-strip{
+  display:flex;align-items:center;gap:14px;margin-top:56px;flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:riseIn 1s 1.1s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.cloud-pill{display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:980px;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.12);font-size:0.75rem;color:rgba(255,255,255,0.65);font-weight:500;backdrop-filter:blur(10px);}
+.cp-dot{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:900;}
+.cp-aws{background:#FF9900;color:#000;}.cp-az{background:#0078D4;color:#fff;}.cp-gcp{background:#4285F4;color:#fff;}
+.strip-sep{width:1px;height:24px;background:rgba(255,255,255,0.1);}
+
+/* Dashboard mockup */
+.hero-visual{
+  position:relative;z-index:2;margin-top:72px;width:100%;max-width:1060px;
+  opacity:0;animation:riseIn 1.2s 1.3s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.dash-frame{border-radius:18px;border:0.5px solid rgba(255,255,255,0.12);overflow:hidden;background:rgba(12,12,16,0.92);box-shadow:0 60px 140px rgba(0,0,0,0.8),0 0 80px rgba(0,113,227,0.12);backdrop-filter:blur(20px);}
+.dash-titlebar{background:rgba(30,30,34,0.9);padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(255,255,255,0.06);}
+.tb-dot{width:12px;height:12px;border-radius:50%;}
+.tb-r{background:#ff5f57;}.tb-y{background:#ffbd2e;}.tb-g{background:#28ca41;}
+.tb-addr{margin:0 auto;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.07);border-radius:6px;padding:4px 80px;font-size:0.68rem;color:rgba(255,255,255,0.25);}
+.dash-body{display:grid;grid-template-columns:190px 1fr;min-height:320px;}
+.dash-sidebar{background:rgba(8,8,12,0.9);border-right:0.5px solid rgba(255,255,255,0.05);padding:16px 0;}
+.side-logo{padding:0 14px 16px;border-bottom:0.5px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:8px;font-size:0.78rem;font-weight:700;color:#fff;}
+.side-logo-mark{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#0071e3,#00c8ff);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:900;color:#fff;}
+.side-item{padding:7px 14px;font-size:0.7rem;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:7px;border-radius:6px;margin:2px 8px;transition:all 0.2s;}
+.side-item.active{background:rgba(0,113,227,0.15);color:var(--accent-light);}
+.dash-main{padding:18px;display:flex;flex-direction:column;gap:14px;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.kpi{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;}
+.kpi-label{font-size:0.62rem;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;}
+.kpi-val{font-size:1.35rem;font-weight:800;letter-spacing:-0.03em;}
+.kpi-ch{font-size:0.6rem;margin-top:3px;}
+.c-cyan{color:var(--cyan);}.c-green{color:var(--green);}.c-yellow{color:#ffd60a;}.c-red{color:#ff453a;}
+.dash-row2{display:grid;grid-template-columns:1fr 190px;gap:12px;flex:1;}
+.chart-card{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px;position:relative;overflow:hidden;}
+.chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.chart-title{font-size:0.7rem;font-weight:600;color:rgba(255,255,255,0.6);}
+.chart-badge{font-size:0.58rem;background:rgba(0,200,255,0.1);border:0.5px solid rgba(0,200,255,0.3);color:var(--cyan);padding:2px 8px;border-radius:20px;}
+.chart-svg{width:100%;height:75px;}
+.ev-card{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px;}
+.ev-title{font-size:0.7rem;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:10px;}
+.ev-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid rgba(255,255,255,0.04);font-size:0.63rem;color:rgba(255,255,255,0.4);}
+.ev-item:last-child{border:none;}
+.ev-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* ═══════════════ TICKER ═══════════════ */
+.ticker-wrap{background:#000;border-top:0.5px solid rgba(255,255,255,0.07);border-bottom:0.5px solid rgba(255,255,255,0.07);overflow:hidden;padding:16px 0;position:relative;}
+.ticker-wrap::before{content:'';position:absolute;left:0;top:0;bottom:0;width:100px;background:linear-gradient(90deg,#000,transparent);z-index:2;}
+.ticker-wrap::after{content:'';position:absolute;right:0;top:0;bottom:0;width:100px;background:linear-gradient(-90deg,#000,transparent);z-index:2;}
+.ticker-track{display:flex;white-space:nowrap;animation:tickerScroll 22s linear infinite;}
+.ticker-item{display:inline-flex;align-items:center;gap:12px;padding:0 52px;font-size:0.8rem;color:rgba(255,255,255,0.3);}
+.ticker-val{font-weight:800;color:#fff;font-size:0.86rem;}
+.ticker-sep{color:rgba(255,255,255,0.1);}
+@keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ═══════════════ SCROLL-ZOOM IMAGE SECTIONS ═══════════════ */
+/* Each .szoom-section has a parallax + zoom bg image driven by JS */
+.szoom-section{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:140px 24px;min-height:90vh;
+}
+.szoom-bg{
+  position:absolute;inset:-60px;z-index:0;
+  background-size:cover;background-position:center;background-attachment:fixed;
+  will-change:transform;transition:none;
+}
+/* Dark overlay per section */
+.szoom-overlay{position:absolute;inset:0;z-index:1;}
+.szoom-content{position:relative;z-index:2;max-width:900px;margin:0 auto;}
+
+/* Section 1 — Data Center */
+.sz-datacenter .szoom-bg{
+  background-image:
+    linear-gradient(to bottom,rgba(0,0,0,0.65) 0%,rgba(0,5,20,0.5) 50%,rgba(0,0,0,0.75) 100%),
+    url('https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=1800&auto=format&fit=crop&q=80');
+}
+/* Section 2 — Abstract Network */
+.sz-network .szoom-bg{
+  background-image:
+    linear-gradient(to bottom,rgba(0,0,0,0.7) 0%,rgba(0,8,30,0.55) 50%,rgba(0,0,0,0.75) 100%),
+    url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1800&auto=format&fit=crop&q=80');
+}
+/* Section 3 — Server Racks */
+.sz-servers .szoom-bg{
+  background-image:
+    linear-gradient(to bottom,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.45) 50%,rgba(0,0,0,0.8) 100%),
+    url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1800&auto=format&fit=crop&q=80');
+}
+/* Section 4 — City Lights / Cloud */
+.sz-city .szoom-bg{
+  background-image:
+    linear-gradient(to bottom,rgba(0,0,0,0.72) 0%,rgba(0,5,25,0.5) 50%,rgba(0,0,0,0.8) 100%),
+    url('https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1800&auto=format&fit=crop&q=80');
+}
+/* Section 5 — AI / Futuristic */
+.sz-ai .szoom-bg{
+  background-image:
+    linear-gradient(to bottom,rgba(0,0,0,0.65) 0%,rgba(0,8,30,0.5) 50%,rgba(0,0,0,0.8) 100%),
+    url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1800&auto=format&fit=crop&q=80');
+}
+
+/* Typography inside szoom */
+.sz-eyebrow{font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+.sz-eyebrow-blue{color:var(--accent-light);}
+.sz-eyebrow-cyan{color:var(--cyan);}
+.sz-eyebrow-green{color:var(--green);}
+.sz-h2{font-size:clamp(2.5rem,6vw,5.5rem);font-weight:900;letter-spacing:-0.045em;line-height:1.0;color:#fff;margin-bottom:20px;text-shadow:0 4px 40px rgba(0,0,0,0.5);}
+.sz-h2 em{font-style:normal;background:linear-gradient(135deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sz-body{font-size:clamp(1rem,1.8vw,1.2rem);color:rgba(255,255,255,0.55);max-width:620px;margin:0 auto 40px;line-height:1.7;letter-spacing:-0.01em;}
+
+/* ═══════════════ FEATURE GRID (dark, no bg) ═══════════════ */
+.feat-section{background:#000;padding:0 24px 100px;}
+.feat-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-radius:22px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.07);}
+.feat-cell{background:#0a0a0d;padding:48px 38px;position:relative;overflow:hidden;transition:background 0.4s;}
+.feat-cell::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity 0.4s;}
+.feat-cell:hover::before{opacity:1;}
+.feat-cell:hover{background:#111115;}
+.fi{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:1.4rem;}
+.fi-b{background:rgba(0,113,227,0.15);box-shadow:inset 0 0 0 0.5px rgba(0,113,227,0.3);}
+.fi-c{background:rgba(0,200,255,0.1);box-shadow:inset 0 0 0 0.5px rgba(0,200,255,0.25);}
+.fi-g{background:rgba(52,199,89,0.1);box-shadow:inset 0 0 0 0.5px rgba(52,199,89,0.25);}
+.feat-cell h3{font-size:1.05rem;font-weight:700;letter-spacing:-0.025em;color:#fff;margin-bottom:10px;}
+.feat-cell p{font-size:0.86rem;color:rgba(255,255,255,0.4);line-height:1.65;}
+
+/* ═══════════════ EVA SECTION ═══════════════ */
+.eva-section{background:#000;padding:0 24px;border-top:0.5px solid rgba(255,255,255,0.07);}
+.eva-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;padding:120px 0;}
+.eva-copy .eyebrow{font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;}
+.eva-copy h2{font-size:clamp(2rem,4vw,3.6rem);font-weight:900;letter-spacing:-0.04em;line-height:1.05;color:#fff;margin-bottom:20px;}
+.eva-copy p{font-size:0.98rem;color:rgba(255,255,255,0.45);line-height:1.7;margin-bottom:14px;}
+.eva-model{display:flex;border:0.5px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;margin-top:28px;}
+.eva-step{flex:1;padding:16px 10px;text-align:center;border-right:0.5px solid rgba(255,255,255,0.07);transition:background 0.3s;}
+.eva-step:last-child{border:none;}
+.eva-step:hover{background:rgba(255,255,255,0.04);}
+.eva-step-letter{font-size:1.5rem;font-weight:900;color:var(--accent-light);margin-bottom:4px;}
+.eva-step-word{font-size:0.65rem;color:rgba(255,255,255,0.3);letter-spacing:0.05em;text-transform:uppercase;}
+.eva-vis{display:flex;justify-content:center;align-items:center;position:relative;}
+.eva-sphere{width:360px;height:360px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;}
+.eva-sphere-bg{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 35%,#0a1f40 0%,#000510 60%,#000 100%);border:0.5px solid rgba(0,113,227,0.22);animation:sphereGlow 5s ease-in-out infinite;}
+@keyframes sphereGlow{0%,100%{box-shadow:0 0 60px rgba(0,113,227,0.18),inset 0 0 40px rgba(0,113,227,0.05);}50%{box-shadow:0 0 100px rgba(0,200,255,0.22),inset 0 0 60px rgba(0,200,255,0.07);}}
+.eva-ring{position:absolute;border-radius:50%;border:0.5px solid rgba(0,113,227,0.12);animation:ringPulse 3s ease-in-out infinite;}
+.eva-ring-1{inset:-22px;animation-delay:0s;}
+.eva-ring-2{inset:-44px;animation-delay:1s;}
+.eva-ring-3{inset:-66px;animation-delay:2s;}
+@keyframes ringPulse{0%,100%{opacity:0.9;transform:scale(1);}50%{opacity:0.3;transform:scale(1.04);}}
+.eva-label{position:relative;z-index:1;text-align:center;}
+.eva-label-main{font-size:4.5rem;font-weight:900;letter-spacing:-0.06em;background:linear-gradient(135deg,#fff 30%,var(--cyan) 70%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.eva-label-sub{font-size:0.72rem;color:rgba(255,255,255,0.3);letter-spacing:0.12em;text-transform:uppercase;}
+.eva-float{position:absolute;right:-24px;top:32px;background:rgba(8,18,38,0.92);border:0.5px solid rgba(0,113,227,0.3);border-radius:14px;padding:14px 18px;font-size:0.7rem;color:rgba(255,255,255,0.6);max-width:195px;backdrop-filter:blur(20px);animation:cardFloat 4s ease-in-out infinite;box-shadow:0 24px 60px rgba(0,0,0,0.6);}
+@keyframes cardFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+.fc-hdr{color:var(--cyan);font-weight:700;font-size:0.68rem;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.fc-live{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s infinite;}
+.fc-row{display:flex;justify-content:space-between;margin-top:5px;}
+.fc-k{color:rgba(255,255,255,0.3);}
+.fc-v{color:#fff;font-weight:700;}
+
+/* ═══════════════ METRICS ═══════════════ */
+.metrics-section{background:#000;border-top:0.5px solid rgba(255,255,255,0.07);padding:0 24px;}
+.metrics-inner{max-width:1200px;margin:0 auto;padding:100px 0;text-align:center;}
+.section-eyebrow{font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;}
+.section-headline{font-size:clamp(2.2rem,5vw,4.2rem);font-weight:900;letter-spacing:-0.045em;line-height:1.05;margin-bottom:0;}
+.section-sub{font-size:1rem;color:rgba(255,255,255,0.4);max-width:540px;margin:16px auto 0;line-height:1.65;}
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:60px;border-radius:20px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.07);}
+.metric-tile{background:#0a0a0d;padding:56px 32px;text-align:center;transition:background 0.3s;}
+.metric-tile:hover{background:#111;}
+.metric-big{font-size:clamp(3.2rem,5vw,5.2rem);font-weight:900;letter-spacing:-0.055em;line-height:1;margin-bottom:10px;}
+.metric-tile p{font-size:0.86rem;color:rgba(255,255,255,0.35);line-height:1.5;max-width:200px;margin:0 auto;}
+
+/* ═══════════════ INDUSTRIES (light section) ═══════════════ */
+.industries-section{background:var(--grey-100);padding:120px 24px;color:var(--grey-800);}
+.industries-inner{max-width:1200px;margin:0 auto;}
+.ind-head{text-align:center;margin-bottom:64px;}
+.ind-head .ey{font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+.ind-head h2{font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:900;letter-spacing:-0.04em;color:var(--grey-800);}
+.ind-head p{font-size:1rem;color:var(--grey-600);max-width:500px;margin:14px auto 0;line-height:1.65;}
+.ind-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.ind-card{background:#fff;border-radius:20px;padding:30px 20px;border:0.5px solid rgba(0,0,0,0.07);box-shadow:0 2px 24px rgba(0,0,0,0.06);transition:all 0.4s cubic-bezier(0.16,1,0.3,1);}
+.ind-card:hover{transform:translateY(-10px);box-shadow:0 24px 64px rgba(0,0,0,0.12);}
+.ind-icon{font-size:2.2rem;margin-bottom:14px;}
+.ind-card h3{font-size:0.88rem;font-weight:800;letter-spacing:-0.02em;color:var(--grey-800);margin-bottom:8px;}
+.ind-card p{font-size:0.76rem;color:var(--grey-600);line-height:1.55;}
+.ind-cta{text-align:center;margin-top:48px;}
+.btn-dark{display:inline-flex;align-items:center;gap:6px;padding:14px 28px;border-radius:980px;font-size:0.95rem;font-weight:700;font-family:'Figtree',sans-serif;text-decoration:none;background:var(--grey-800);color:#fff;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);}
+.btn-dark:hover{background:#000;transform:scale(1.03);}
+
+/* ═══════════════ CLOUD PROVIDERS ═══════════════ */
+.clouds-section{background:#000;padding:120px 24px;text-align:center;}
+.clouds-inner{max-width:1100px;margin:0 auto;}
+.clouds-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:60px;}
+.cloud-tile{background:#0a0a0d;border:0.5px solid rgba(255,255,255,0.07);border-radius:24px;padding:52px 32px;position:relative;overflow:hidden;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);}
+.cloud-tile::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:220px;height:220px;border-radius:50%;filter:blur(60px);opacity:0;transition:opacity 0.4s;}
+.ct-aws::before{background:rgba(255,153,0,0.18);}
+.ct-azure::before{background:rgba(0,120,212,0.18);}
+.ct-gcp::before{background:rgba(66,133,244,0.18);}
+.cloud-tile:hover::before{opacity:1;}
+.cloud-tile:hover{transform:translateY(-8px);border-color:rgba(255,255,255,0.14);box-shadow:0 40px 100px rgba(0,0,0,0.5);}
+.cloud-num-label{font-size:0.68rem;color:rgba(255,255,255,0.18);letter-spacing:0.1em;margin-bottom:20px;}
+.cloud-icon-big{width:72px;height:72px;border-radius:20px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;}
+.ci-aws{background:linear-gradient(135deg,#FF9900,#e68000);}
+.ci-azure{background:linear-gradient(135deg,#0078D4,#005999);}
+.ci-gcp{background:linear-gradient(135deg,#4285F4,#1a5ed6);}
+.cloud-tile h3{font-size:1.2rem;font-weight:800;letter-spacing:-0.03em;color:#fff;margin-bottom:6px;}
+.cloud-tile p{font-size:0.84rem;color:rgba(255,255,255,0.35);}
+
+/* ═══════════════ BLOGS ═══════════════ */
+.blogs-section{background:var(--grey-100);padding:120px 24px;color:var(--grey-800);}
+.blogs-inner{max-width:1200px;margin:0 auto;}
+.blogs-head{text-align:center;margin-bottom:56px;}
+.blogs-head .ey{font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+.blogs-head h2{font-size:clamp(2rem,4vw,3.4rem);font-weight:900;letter-spacing:-0.04em;color:var(--grey-800);}
+.blogs-head p{font-size:1rem;color:var(--grey-600);max-width:480px;margin:14px auto 0;line-height:1.65;}
+.blogs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.blog-card{background:#fff;border-radius:20px;overflow:hidden;border:0.5px solid rgba(0,0,0,0.06);box-shadow:0 2px 24px rgba(0,0,0,0.06);transition:all 0.4s cubic-bezier(0.16,1,0.3,1);}
+.blog-card:hover{transform:translateY(-8px);box-shadow:0 24px 64px rgba(0,0,0,0.13);}
+.blog-thumb{height:190px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;position:relative;overflow:hidden;background-size:cover;background-position:center;}
+.bt-1{background:linear-gradient(135deg,rgba(0,15,40,0.88),rgba(0,30,80,0.88)),url('https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=600&auto=format&fit=crop&q=80') center/cover;}
+.bt-2{background:linear-gradient(135deg,rgba(20,0,50,0.88),rgba(40,0,100,0.88)),url('https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&auto=format&fit=crop&q=80') center/cover;}
+.bt-3{background:linear-gradient(135deg,rgba(0,15,10,0.88),rgba(0,40,20,0.88)),url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80') center/cover;}
+.blog-body{padding:24px;}
+.blog-tag{font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.blog-title{font-size:0.96rem;font-weight:800;letter-spacing:-0.025em;color:var(--grey-800);margin-bottom:10px;line-height:1.4;}
+.blog-date{font-size:0.74rem;color:var(--grey-600);}
+
+/* ═══════════════ FAQ ═══════════════ */
+.faq-section{background:#000;padding:120px 24px;}
+.faq-inner{max-width:740px;margin:0 auto;}
+.faq-head{text-align:center;margin-bottom:56px;}
+.faq-item{border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:22px 0;font-size:0.97rem;font-weight:700;color:#fff;cursor:pointer;letter-spacing:-0.02em;transition:color 0.2s;user-select:none;}
+.faq-q:hover{color:var(--accent-light);}
+.faq-icon{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.3s;font-size:1rem;color:var(--accent-light);font-weight:400;}
+.faq-item.open .faq-icon{background:rgba(0,113,227,0.2);transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.45s cubic-bezier(0.16,1,0.3,1),padding 0.3s;font-size:0.88rem;color:rgba(255,255,255,0.4);line-height:1.75;letter-spacing:-0.01em;}
+.faq-item.open .faq-a{max-height:300px;padding-bottom:22px;}
+
+/* ═══════════════ CTA ═══════════════ */
+.cta-section{background:#000;padding:0 24px 120px;}
+.cta-card{max-width:1000px;margin:0 auto;position:relative;border-radius:32px;overflow:hidden;min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 60px;}
+.cta-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80') center/cover no-repeat;transform:scale(1.05);transition:transform 8s ease;}
+.cta-card:hover .cta-bg{transform:scale(1.12);}
+.cta-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,5,30,0.88),rgba(0,30,80,0.82));}
+.cta-border{position:absolute;inset:0;border:0.5px solid rgba(0,113,227,0.3);border-radius:32px;pointer-events:none;}
+.cta-content{position:relative;z-index:2;}
+.cta-content h2{font-size:clamp(2rem,4.5vw,3.8rem);font-weight:900;letter-spacing:-0.045em;color:#fff;margin-bottom:16px;}
+.cta-content p{font-size:1.05rem;color:rgba(255,255,255,0.5);max-width:500px;margin:0 auto 40px;line-height:1.65;}
+.cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+
+/* ═══════════════ FOOTER ═══════════════ */
+footer{background:#000;border-top:0.5px solid rgba(255,255,255,0.08);padding:64px 24px 36px;}
+.footer-inner{max-width:1200px;margin:0 auto;}
+.footer-top{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr 1fr;gap:40px;padding-bottom:48px;border-bottom:0.5px solid rgba(255,255,255,0.07);}
+.footer-logo svg{height:26px;}
+.footer-tagline{font-size:0.8rem;color:rgba(255,255,255,0.3);line-height:1.6;max-width:220px;margin:14px 0;}
+.footer-email{font-size:0.8rem;color:var(--accent-light);text-decoration:none;}
+.footer-addr{font-size:0.73rem;color:rgba(255,255,255,0.18);margin-top:8px;line-height:1.5;}
+.footer-col h4{font-size:0.76rem;font-weight:800;color:#fff;letter-spacing:0.02em;margin-bottom:16px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.footer-col a{font-size:0.76rem;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.2s;}
+.footer-col a:hover{color:rgba(255,255,255,0.75);}
+.footer-bottom{padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:rgba(255,255,255,0.22);}
+.footer-legal{display:flex;gap:20px;}
+.footer-legal a{color:rgba(255,255,255,0.22);text-decoration:none;transition:color 0.2s;}
+.footer-legal a:hover{color:rgba(255,255,255,0.55);}
+
+/* ═══════════════ SCROLL REVEAL ═══════════════ */
+.sr{opacity:0;transform:translateY(44px);transition:opacity 0.85s cubic-bezier(0.16,1,0.3,1),transform 0.85s cubic-bezier(0.16,1,0.3,1);}
+.sr.in{opacity:1;transform:none;}
+.sr-l{opacity:0;transform:translateX(-44px);transition:opacity 0.85s cubic-bezier(0.16,1,0.3,1),transform 0.85s cubic-bezier(0.16,1,0.3,1);}
+.sr-l.in{opacity:1;transform:none;}
+.sr-r{opacity:0;transform:translateX(44px);transition:opacity 0.85s cubic-bezier(0.16,1,0.3,1),transform 0.85s cubic-bezier(0.16,1,0.3,1);}
+.sr-r.in{opacity:1;transform:none;}
+.sr-sc{opacity:0;transform:scale(0.9);transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1),transform 0.9s cubic-bezier(0.16,1,0.3,1);}
+.sr-sc.in{opacity:1;transform:none;}
+.d1{transition-delay:0.05s}.d2{transition-delay:0.1s}.d3{transition-delay:0.15s}
+.d4{transition-delay:0.2s}.d5{transition-delay:0.25s}.d6{transition-delay:0.3s}
+
+/* ═══════════════ STATEMENT SECTION ═══════════════ */
+.statement-section{background:#000;padding:160px 24px;text-align:center;position:relative;overflow:hidden;}
+.statement-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 50% at 50% 50%,rgba(0,113,227,0.06),transparent);}
+.statement-headline{font-size:clamp(2.6rem,6vw,5.8rem);font-weight:900;letter-spacing:-0.05em;line-height:1.0;color:#fff;max-width:920px;margin:0 auto;position:relative;}
+.statement-headline span{color:rgba(255,255,255,0.22);}
+.statement-headline em{font-style:normal;background:linear-gradient(135deg,var(--accent-light),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* Zoom reveal for big statements */
+.zoom-reveal{opacity:0;transform:scale(0.8);transition:opacity 1s cubic-bezier(0.16,1,0.3,1),transform 1s cubic-bezier(0.16,1,0.3,1);}
+.zoom-reveal.in{opacity:1;transform:scale(1);}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(32px);}to{opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <div class="nav-logo">
+    <svg viewBox="0 0 170 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M26 30H13a9 9 0 01-1.8-17.82A11 11 0 0133 15a6.5 6.5 0 01-.5 13" fill="none" stroke="#00c8ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <ellipse cx="23" cy="21" rx="11" ry="4.5" stroke="rgba(0,200,255,0.35)" stroke-width="0.8" fill="none" transform="rotate(-22 23 21)"/>
+      <circle cx="23" cy="21" r="2.5" fill="#00c8ff" opacity="0.95"/>
+      <circle cx="32" cy="16" r="1.4" fill="#2997ff"/>
+      <circle cx="14" cy="26" r="1.1" fill="#34c759"/>
+      <text x="40" y="27" font-family="Figtree,sans-serif" font-weight="900" font-size="16" fill="white" letter-spacing="-0.6">cloud</text>
+      <text x="86" y="27" font-family="Figtree,sans-serif" font-weight="900" font-size="16" fill="#00c8ff" letter-spacing="-0.6">eva</text>
+      <text x="116" y="27" font-family="Figtree,sans-serif" font-weight="300" font-size="12" fill="rgba(255,255,255,0.45)">.ai</text>
+    </svg>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Solutions</a></li>
+    <li><a href="#">Company</a></li>
+    <li><a href="#">Resources</a></li>
+    <li><a href="#">Pricing</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="#">Sign In</a>
+    <a href="#" class="nav-pill">Book a Demo</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO — full-bleed data center bg + zoom-in on load
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-mesh"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Public Preview · Available until March 31</div>
+    <h1>AI-First Multi-Cloud<br><em>Decision Governance.</em></h1>
+    <p class="hero-sub">Orchestrate cloud decisions with clarity, accountability, and control. The AI-powered system for governing cloud operations as complexity scales.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-apple btn-blue">Try Free — No Cost &nbsp;→</a>
+      <a href="#" class="btn-apple btn-ghost">Book a Demo</a>
+    </div>
+    <div class="cloud-strip">
+      <div class="cloud-pill"><div class="cp-dot cp-aws">AWS</div>Amazon Web Services</div>
+      <div class="strip-sep"></div>
+      <div class="cloud-pill"><div class="cp-dot cp-az">Az</div>Microsoft Azure</div>
+      <div class="strip-sep"></div>
+      <div class="cloud-pill"><div class="cp-dot cp-gcp">G</div>Google Cloud</div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="dash-frame">
+        <div class="dash-titlebar">
+          <div class="tb-dot tb-r"></div><div class="tb-dot tb-y"></div><div class="tb-dot tb-g"></div>
+          <div class="tb-addr">app.cloudeva.ai — Governance Dashboard</div>
+        </div>
+        <div class="dash-body">
+          <div class="dash-sidebar">
+            <div class="side-logo"><div class="side-logo-mark">C</div>cloudeva</div>
+            <div style="padding:10px 0;">
+              <div class="side-item active">◈ &nbsp;Overview</div>
+              <div class="side-item">💰 &nbsp;FinOps</div>
+              <div class="side-item">🛡 &nbsp;SecOps</div>
+              <div class="side-item">⚙️ &nbsp;CloudOps</div>
+              <div class="side-item">📋 &nbsp;Governance</div>
+              <div class="side-item">✓ &nbsp;Compliance</div>
+              <div class="side-item" style="margin-top:20px;">💬 &nbsp;Ask EVA</div>
+            </div>
+          </div>
+          <div class="dash-main">
+            <div class="kpi-row">
+              <div class="kpi"><div class="kpi-label">Events Analyzed</div><div class="kpi-val c-cyan">1,247</div><div class="kpi-ch c-green">↑ Today</div></div>
+              <div class="kpi"><div class="kpi-label">Cost Savings</div><div class="kpi-val c-green">$42.3K</div><div class="kpi-ch c-green">↑ 18% this week</div></div>
+              <div class="kpi"><div class="kpi-label">Compliance</div><div class="kpi-val c-yellow">96.4%</div><div class="kpi-ch c-green">↑ 3.2% MoM</div></div>
+              <div class="kpi"><div class="kpi-label">Open Risks</div><div class="kpi-val c-red">3</div><div class="kpi-ch c-red">Needs review</div></div>
+            </div>
+            <div class="dash-row2">
+              <div class="chart-card">
+                <div class="chart-head"><span class="chart-title">Cloud Spend Trend — 30 Days</span><span class="chart-badge">Live</span></div>
+                <svg class="chart-svg" viewBox="0 0 440 75" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(0,200,255,0.28)"/>
+                      <stop offset="100%" stop-color="rgba(0,200,255,0)"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,58 C40,48 60,62 100,42 S170,18 210,32 S280,52 320,26 S390,8 440,18" stroke="#00c8ff" stroke-width="2" fill="none" stroke-linecap="round"/>
+                  <path d="M0,58 C40,48 60,62 100,42 S170,18 210,32 S280,52 320,26 S390,8 440,18 L440,75 L0,75Z" fill="url(#cg)"/>
+                  <circle cx="440" cy="18" r="4" fill="#00c8ff"/>
+                  <circle cx="440" cy="18" r="9" fill="rgba(0,200,255,0.18)"/>
+                </svg>
+              </div>
+              <div class="ev-card">
+                <div class="ev-title">Recent Events</div>
+                <div class="ev-item"><div class="ev-dot" style="background:var(--green)"></div>S3 policy verified</div>
+                <div class="ev-item"><div class="ev-dot" style="background:#ffd60a"></div>IAM change pending</div>
+                <div class="ev-item"><div class="ev-dot" style="background:#ff453a"></div>Untagged resource</div>
+                <div class="ev-item"><div class="ev-dot" style="background:var(--green)"></div>Budget alert cleared</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <div class="ticker-item"><span class="ticker-val">1,000+</span>Cloud Events Analyzed Daily<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">50+</span>Years of Cumulative Cloud Expertise<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">10K+</span>Hours of AI-Led Engineering<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">30+</span>Proven Customer Setups<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">3</span>Major Cloud Platforms<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">5</span>Industry Verticals<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">1,000+</span>Cloud Events Analyzed Daily<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">50+</span>Years of Cumulative Cloud Expertise<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">10K+</span>Hours of AI-Led Engineering<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">30+</span>Proven Customer Setups<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">3</span>Major Cloud Platforms<span class="ticker-sep">✦</span></div>
+    <div class="ticker-item"><span class="ticker-val">5</span>Industry Verticals<span class="ticker-sep">✦</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCROLL-ZOOM SECTION 1 — Data Center
+     "Orchestrate cloud decisions with clarity"
+══════════════════════════════════════ -->
+<section class="szoom-section sz-datacenter" data-szoom>
+  <div class="szoom-bg" data-parallax></div>
+  <div class="szoom-content">
+    <div class="sz-eyebrow sz-eyebrow-cyan sr">Why Cloudeva.ai</div>
+    <h2 class="sz-h2 sr d1">Orchestrate cloud decisions<br><em>with clarity.</em></h2>
+    <p class="sz-body sr d2">Cloudeva.ai interprets change across cost, security, and infrastructure — helping teams focus on what truly requires attention, not just what changed.</p>
+    <a href="#" class="btn-apple btn-blue sr d3">Explore the Platform →</a>
+  </div>
+</section>
+
+<!-- FEATURE GRID -->
+<section class="feat-section">
+  <div class="feat-grid">
+    <div class="feat-cell sr d1"><div class="fi fi-b">🔍</div><h3>Clarity Before Action</h3><p>Interprets change across cost, security, and infrastructure — helping teams focus on what truly requires attention.</p></div>
+    <div class="feat-cell sr d2"><div class="fi fi-c">⚡</div><h3>Decision-Ready Signals</h3><p>Insights aggregated and time-bound, giving leaders meaningful signals instead of constant alert-driven interruptions.</p></div>
+    <div class="feat-cell sr d3"><div class="fi fi-g">🏛️</div><h3>Governance by Design</h3><p>Ownership, accountability, and intent embedded into how cloud activity is understood — not bolted on later.</p></div>
+    <div class="feat-cell sr d4"><div class="fi fi-b">🛡️</div><h3>AI Within Guardrails</h3><p>Recommendations are explainable, policy-aware, and bounded. Actions suggested — never silently executed.</p></div>
+    <div class="feat-cell sr d5"><div class="fi fi-c">📈</div><h3>Matures With You</h3><p>The same framework supports early visibility, structured advice, and advanced orchestration as you scale.</p></div>
+    <div class="feat-cell sr d6"><div class="fi fi-g">☁️</div><h3>Unified Multi-Cloud</h3><p>A single intuitive view across providers eliminates fragmentation without replacing existing tools.</p></div>
+  </div>
+</section>
+
+<!-- STATEMENT -->
+<section class="statement-section">
+  <div class="statement-headline zoom-reveal">
+    <span>Cloudeva.ai is making</span> the cloud<br>
+    <em>so smart</em> <span>it runs itself.</span><br>
+    <span>Minimal humans.</span> Maximum brilliance.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     EVA SECTION — with Network image bg hint
+══════════════════════════════════════ -->
+<section class="eva-section">
+  <div class="eva-inner">
+    <div class="eva-copy sr-l">
+      <div class="eyebrow">Meet EVA</div>
+      <h2>Our Intellibot.<br>Your Cloud Ally.</h2>
+      <p>EVA understands your cloud environment end-to-end. She explains what changed, verifies who approved it, advises on trade-offs, and orchestrates governed actions — always within policy boundaries.</p>
+      <p>Agentic, not autonomous. Every action traceable, every decision auditable.</p>
+      <div class="eva-model">
+        <div class="eva-step"><div class="eva-step-letter">E</div><div class="eva-step-word">Explain</div></div>
+        <div class="eva-step"><div class="eva-step-letter">V</div><div class="eva-step-word">Verify</div></div>
+        <div class="eva-step"><div class="eva-step-letter">A</div><div class="eva-step-word">Advise</div></div>
+        <div class="eva-step"><div class="eva-step-letter">O</div><div class="eva-step-word">Orchestrate</div></div>
+      </div>
+      <a href="#" class="btn-apple btn-blue" style="display:inline-flex;margin-top:32px;">Talk to EVA →</a>
+    </div>
+    <div class="eva-vis sr-r">
+      <div class="eva-sphere">
+        <div class="eva-sphere-bg"></div>
+        <div class="eva-ring eva-ring-1"></div>
+        <div class="eva-ring eva-ring-2"></div>
+        <div class="eva-ring eva-ring-3"></div>
+        <div class="eva-label">
+          <div class="eva-label-main">EVA</div>
+          <div class="eva-label-sub">Intellibot</div>
+        </div>
+      </div>
+      <div class="eva-float">
+        <div class="fc-hdr"><div class="fc-live"></div>EVA Analysis</div>
+        <div class="fc-row"><span class="fc-k">Anomalies</span><span class="fc-v">3</span></div>
+        <div class="fc-row"><span class="fc-k">Savings</span><span class="fc-v">$8.2K</span></div>
+        <div class="fc-row"><span class="fc-k">Confidence</span><span class="fc-v">97%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SCROLL-ZOOM SECTION 2 — Abstract space/network
+     "Metrics of Business Impact"
+══════════════════════════════════════ -->
+<section class="szoom-section sz-network" data-szoom>
+  <div class="szoom-bg" data-parallax></div>
+  <div class="szoom-content">
+    <div class="sz-eyebrow sz-eyebrow-blue sr">Business Impact</div>
+    <h2 class="sz-h2 sr d1">Numbers that prove it.</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;max-width:800px;margin:48px auto 0;border:0.5px solid rgba(255,255,255,0.12);border-radius:20px;overflow:hidden;">
+      <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(16px);padding:48px 24px;text-align:center;" class="sr d1">
+        <div style="font-size:clamp(2.5rem,4vw,4rem);font-weight:900;letter-spacing:-0.05em;color:var(--cyan);line-height:1;">50+</div>
+        <div style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:8px;line-height:1.5;">Years of cumulative cloud expertise</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(16px);padding:48px 24px;text-align:center;border-left:0.5px solid rgba(255,255,255,0.08);border-right:0.5px solid rgba(255,255,255,0.08);" class="sr d2">
+        <div style="font-size:clamp(2.5rem,4vw,4rem);font-weight:900;letter-spacing:-0.05em;color:var(--accent-light);line-height:1;">10K+</div>
+        <div style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:8px;line-height:1.5;">Hours of AI-led engineering</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(16px);padding:48px 24px;text-align:center;" class="sr d3">
+        <div style="font-size:clamp(2.5rem,4vw,4rem);font-weight:900;letter-spacing:-0.05em;color:var(--green);line-height:1;">30+</div>
+        <div style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:8px;line-height:1.5;">Proven customer setups</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     INDUSTRIES — light section
+══════════════════════════════════════ -->
+<section class="industries-section">
+  <div class="industries-inner">
+    <div class="ind-head sr">
+      <div class="ey">Industries</div>
+      <h2>Leaders We Empower</h2>
+      <p>Purpose-built governance across the industries where cloud complexity hits hardest.</p>
+    </div>
+    <div class="ind-grid">
+      <div class="ind-card sr d1"><div class="ind-icon">🏦</div><h3>BFSI & Financial Services</h3><p>Governance without slowing business velocity in highly regulated environments.</p></div>
+      <div class="ind-card sr d2"><div class="ind-icon">🏥</div><h3>Healthcare</h3><p>Protect sensitive patient data while scaling digital systems across complex cloud environments.</p></div>
+      <div class="ind-card sr d3"><div class="ind-icon">🛒</div><h3>Retail & E-Commerce</h3><p>Evaluate scaling decisions with confidence and avoid unnecessary cost leakage.</p></div>
+      <div class="ind-card sr d4"><div class="ind-icon">🏭</div><h3>Manufacturing</h3><p>Coordinate decisions before issues escalate into costly production downtime.</p></div>
+      <div class="ind-card sr d5"><div class="ind-icon">💻</div><h3>SaaS & IT</h3><p>Build strong decision habits early with structured workflows that mature as you scale.</p></div>
+    </div>
+    <div class="ind-cta sr"><a href="#" class="btn-dark">Explore All Solutions &nbsp;→</a></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SCROLL-ZOOM SECTION 3 — Server racks
+     "Cloud ecosystem"
+══════════════════════════════════════ -->
+<section class="szoom-section sz-servers" data-szoom>
+  <div class="szoom-bg" data-parallax></div>
+  <div class="szoom-content">
+    <div class="sz-eyebrow sz-eyebrow-green sr">Cloud Ecosystem</div>
+    <h2 class="sz-h2 sr d1">Works across<br><em>every major cloud.</em></h2>
+    <p class="sz-body sr d2">Preserving freedom of choice while maintaining consistency in governance across AWS, Azure, and Google Cloud Platform.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:8px;" class="sr d3">
+      <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.12);border-radius:16px;padding:24px 36px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#FF9900,#e68000);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">☁</div>
+        <div style="font-weight:800;color:#fff;">AWS</div><div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Amazon Web Services</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.12);border-radius:16px;padding:24px 36px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#0078D4,#005999);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">⬡</div>
+        <div style="font-weight:800;color:#fff;">Azure</div><div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Microsoft Azure</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.12);border-radius:16px;padding:24px 36px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#4285F4,#1a5ed6);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">◆</div>
+        <div style="font-weight:800;color:#fff;">GCP</div><div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Google Cloud</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOGS -->
+<section class="blogs-section">
+  <div class="blogs-inner">
+    <div class="blogs-head sr">
+      <div class="ey">Insights</div>
+      <h2>Mastering Multi-Cloud Decisions</h2>
+      <p>Expert perspectives for teams navigating cloud growth with intention and control.</p>
+    </div>
+    <div class="blogs-grid">
+      <div class="blog-card sr d1">
+        <div class="blog-thumb bt-1"><span style="position:relative;z-index:1;">🔗</span></div>
+        <div class="blog-body"><div class="blog-tag">Platform Update</div><div class="blog-title">Cloudeva.ai MSP Multi-Customer Support: One Login. Full Context.</div><div class="blog-date">March 7, 2026</div></div>
+      </div>
+      <div class="blog-card sr d2">
+        <div class="blog-thumb bt-2"><span style="position:relative;z-index:1;">🤖</span></div>
+        <div class="blog-body"><div class="blog-tag">AI Research</div><div class="blog-title">Anthropic AI Explained: Safety, Claude Opus 4.6, and the Future of Steerable Systems</div><div class="blog-date">February 21, 2026</div></div>
+      </div>
+      <div class="blog-card sr d3">
+        <div class="blog-thumb bt-3"><span style="position:relative;z-index:1;">⚙️</span></div>
+        <div class="blog-body"><div class="blog-tag">Cloud Ops</div><div class="blog-title">The Power of Cloud Orchestration: Automating Complexity for Speed</div><div class="blog-date">January 14, 2026</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="faq-head sr">
+      <div class="section-eyebrow" style="color:var(--accent-light);">Questions</div>
+      <h2 class="section-headline">Frequently Asked</h2>
+    </div>
+    <div class="faq-item sr"><div class="faq-q" onclick="tFaq(this)">What exactly does Cloudeva.ai do?<span class="faq-icon">+</span></div><div class="faq-a">Cloudeva.ai helps teams understand cloud change and make better decisions. It explains what changed, who changed it, why it changed, and how decisions should be reviewed and governed. It sits above monitoring tools as a decision clarity and accountability layer — not a replacement for them.</div></div>
+    <div class="faq-item sr d1"><div class="faq-q" onclick="tFaq(this)">Is Cloudeva.ai a monitoring or observability tool?<span class="faq-icon">+</span></div><div class="faq-a">No. Cloudeva.ai consumes signals from cloud platforms and tools, but its focus is decision context — not incident response. It does not generate real-time alerts or replace observability systems.</div></div>
+    <div class="faq-item sr d2"><div class="faq-q" onclick="tFaq(this)">Does Cloudeva.ai make changes in my cloud account?<span class="faq-icon">+</span></div><div class="faq-a">Only when explicitly allowed and only in higher plans. Starter, Growth, and Pro plans offer read-only access with no execution. Enterprise plans require human approval for any action. Cloudeva.ai never executes silently.</div></div>
+    <div class="faq-item sr d3"><div class="faq-q" onclick="tFaq(this)">Is Cloudeva.ai an autonomous AI system?<span class="faq-icon">+</span></div><div class="faq-a">No. Cloudeva.ai is agentic, not autonomous. AI provides context, options, and guidance — humans remain accountable. Policies define what can and cannot happen, and every decision can be traced, reviewed, and audited.</div></div>
+    <div class="faq-item sr d4"><div class="faq-q" onclick="tFaq(this)">What does the EVA-O model mean?<span class="faq-icon">+</span></div><div class="faq-a">EVA-O stands for Explain → Verify → Advise → Orchestrate. It describes how Cloudeva.ai matures with your organization — from explaining what changed, to verifying approvals, to advising on trade-offs, to orchestrating policy-bound, auditable execution.</div></div>
+    <div class="faq-item sr d5"><div class="faq-q" onclick="tFaq(this)">What's included in the Public Preview?<span class="faq-icon">+</span></div><div class="faq-a">The Pro plan Public Preview includes context-rich FinOps & SecOps signals, cross-domain explainability, review-ready summaries, and AI-assisted explanations. Free until March 31.</div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     CTA — Earth from space / cloud bg
+══════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-card sr-sc">
+    <div class="cta-bg"></div>
+    <div class="cta-overlay"></div>
+    <div class="cta-border"></div>
+    <div class="cta-content">
+      <div style="font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-light);margin-bottom:14px;">Get Started Today</div>
+      <h2>Partner with your<br>Multi-Cloud Ally</h2>
+      <p>When cloud complexity outpaces confidence, Cloudeva.ai restores clarity — from early discipline to enterprise-grade governance.</p>
+      <div class="cta-btns">
+        <a href="#" class="btn-apple btn-blue">Schedule a Demo →</a>
+        <a href="#" class="btn-apple btn-ghost">Start Free Trial</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">
+          <svg viewBox="0 0 170 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M26 30H13a9 9 0 01-1.8-17.82A11 11 0 0133 15a6.5 6.5 0 01-.5 13" fill="none" stroke="#00c8ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <ellipse cx="23" cy="21" rx="11" ry="4.5" stroke="rgba(0,200,255,0.35)" stroke-width="0.8" fill="none" transform="rotate(-22 23 21)"/>
+            <circle cx="23" cy="21" r="2.5" fill="#00c8ff" opacity="0.95"/>
+            <circle cx="32" cy="16" r="1.4" fill="#2997ff"/>
+            <circle cx="14" cy="26" r="1.1" fill="#34c759"/>
+            <text x="40" y="27" font-family="Figtree,sans-serif" font-weight="900" font-size="16" fill="white" letter-spacing="-0.6">cloud</text>
+            <text x="86" y="27" font-family="Figtree,sans-serif" font-weight="900" font-size="16" fill="#00c8ff" letter-spacing="-0.6">eva</text>
+            <text x="116" y="27" font-family="Figtree,sans-serif" font-weight="300" font-size="12" fill="rgba(255,255,255,0.4)">.ai</text>
+          </svg>
+        </div>
+        <p class="footer-tagline">The future of cloud operations is autonomous. Start your AI-first journey with Cloudeva.</p>
+        <a href="mailto:support@cloudeva.ai" class="footer-email">support@cloudeva.ai</a>
+        <p class="footer-addr">8, The Green, Ste A<br>Dover, DE 19901</p>
+      </div>
+      <div class="footer-col"><h4>By Product</h4><ul><li><a href="#">Governance</a></li><li><a href="#">FinOps</a></li><li><a href="#">SecOps</a></li><li><a href="#">CloudOps</a></li><li><a href="#">ComplianceOps</a></li></ul></div>
+      <div class="footer-col"><h4>By Industry</h4><ul><li><a href="#">BFSI</a></li><li><a href="#">Healthcare</a></li><li><a href="#">Retail</a></li><li><a href="#">Manufacturing</a></li><li><a href="#">IT & SaaS</a></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Leadership</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact Us</a></li><li><a href="#">In The News</a></li></ul></div>
+      <div class="footer-col"><h4>Resources</h4><ul><li><a href="#">Blogs</a></li><li><a href="#">Case Studies</a></li><li><a href="#">Videos</a></li><li><a href="#">Documents</a></li><li><a href="#">FAQs</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>Copyright © 2026 cloudeva.ai — All Rights Reserved.</span>
+      <div class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Scroll-based reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); } });
+}, { threshold: 0.07, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.sr,.sr-l,.sr-r,.sr-sc,.zoom-reveal').forEach(el => io.observe(el));
+
+// ── Nav blur
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').style.background =
+    window.scrollY > 40 ? 'rgba(0,0,0,0.92)' : 'rgba(0,0,0,0.75)';
+}, { passive: true });
+
+// ── Scroll-zoom for szoom sections (scale bg on scroll)
+const szSections = document.querySelectorAll('[data-szoom]');
+function onScroll() {
+  szSections.forEach(sec => {
+    const bg = sec.querySelector('[data-parallax]');
+    if (!bg) return;
+    const rect = sec.getBoundingClientRect();
+    const wh = window.innerHeight;
+    // progress: 0 when top hits bottom of viewport, 1 when bottom hits top
+    const progress = 1 - Math.min(Math.max(rect.bottom / (wh + rect.height), 0), 1);
+    // Scale from 1.08 → 1.0 as section scrolls into view, then parallax offset
+    const scale = 1.1 - progress * 0.08;
+    const translateY = (progress - 0.5) * 60; // parallax
+    bg.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+  });
+
+  // Hero bg subtle zoom-out as user scrolls down
+  const heroBg = document.getElementById('heroBg');
+  if (heroBg) {
+    const sy = window.scrollY;
+    const scale = Math.max(1.0, 1.0 + sy * 0.0002);
+    const opa  = Math.max(0, 1 - sy * 0.001);
+    heroBg.style.transform = `scale(${scale})`;
+    heroBg.style.opacity   = opa;
+  }
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// ── FAQ
+function tFaq(el) {
+  const item = el.parentElement;
+  const open = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!open) item.classList.add('open');
+}
+</script>
+</body>
+</html>
